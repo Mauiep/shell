@@ -6,7 +6,7 @@
 /*   By: admaupie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 18:54:56 by admaupie          #+#    #+#             */
-/*   Updated: 2022/06/14 20:31:43 by admaupie         ###   ########.fr       */
+/*   Updated: 2022/06/15 20:05:35 by admaupie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,48 @@ int	push_sep(t_lst *lst, char *buffer)
 	return (i);
 }
 
+int	ft_replacedollar(t_lst *l, int k, int c)
+{
+	int		i;
+	int		dollar;
+	char	*var;
+	char	*new;
+	int		n;
+
+	dollar = 0;
+	i = 0;
+	while (l->str[k + dollar] && l->str[k + dollar] != '\t'
+			&& l->str[k + dollar] != ' ' && (c != 34 || l->str[k + dollar] != 34))
+		dollar++;
+	var = "";//fonction pour choper la str dans **envp
+	n = ft_strlen(var);
+	new = malloc(ft_strlen(l->str) + n - dollar);
+	if (!new)
+		return (-1);
+	while (l->str[i] && i < k)
+	{
+		new[i] = l->str[i];
+		i++;
+	}
+	while (var[i - k])
+	{
+		new[i] = var[i];
+		i++;
+	}
+	while (l->str[k + dollar])
+	{
+		new[i] = l->str[k + dollar];
+		i++;
+		k++;
+	}
+	new[i] == '\0';
+	var = l->str;
+	l->str = new;
+	free(var);
+	var = 0; 
+	return (n - 2);
+}
+
 void	expand(t_lst *lst)
 {
 	t_lst	*ptr;
@@ -182,14 +224,14 @@ void	expand(t_lst *lst)
 		{
 			i = 0;
 			c = 0;
-			while (ptr->str[i])
+			while (ptr->str && ptr->str[i])
 			{
 				if (c == 0 && (ptr->str[i] == 39 || ptr->str[i] == 34))
 					c = ptr->str[i];
 				else if (c != 0 && ptr->str[i] == c)
 					c = 0;
 				else if (ptr->str[i] == '$' && c != SIMPLE_QUOTE)
-					//LA CHECK ENV ET REMPLACER
+					i = i + ft_replacedollar(ptr, i, c);//LA CHECK ENV ET REMPLACER
 				i++;
 			}
 			//	ENSUITE gerer " / '
@@ -221,10 +263,11 @@ int parse(char *line_buffer)
     }
 	ft_printlst(lst);
 	expand(lst);
+	ft_printlst(lst);
 	return (1);
 }
 
-int	main(int ac, char **av)
+int	main(int ac, char **av, char **envp)
 {
 	char	*line_buffer;
 
