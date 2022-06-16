@@ -6,7 +6,7 @@
 /*   By: admaupie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/13 15:07:11 by admaupie          #+#    #+#             */
-/*   Updated: 2022/06/14 20:15:44 by admaupie         ###   ########.fr       */
+/*   Updated: 2022/06/16 19:46:40 by admaupie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*ft_strndup(const char *src, int n)
 	while (i < n)
 	{
 		str[i] = src[i];
-		i++;;
+		i++;
 	}
 	str[i] = 0;
 	return (str);
