@@ -6,7 +6,7 @@
 /*   By: admaupie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 18:54:56 by admaupie          #+#    #+#             */
-/*   Updated: 2022/06/16 20:03:21 by admaupie         ###   ########.fr       */
+/*   Updated: 2022/07/07 19:25:55 by admaupie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include <readline/history.h>
 #include <unistd.h>
 
-#define SIMPLE_QUOTE 39
 
 int	get_word(char *buffer, t_lst *new)
 {
@@ -25,25 +24,6 @@ int	get_word(char *buffer, t_lst *new)
 	int	c;
 
 	i = 0;
-/*    c = ' ';
-	while (buffer[i] && ((c == ' ' && buffer[i] != c) || (c != ' '
-		&& buffer[i] == c && (buffer[i + 1] != 0 || buffer[i + 1] != ' '))))
-	{
-		if (c == ' ' && (buffer[i] == SIMPLE_QUOTE || buffer[i] == 34
-				|| buffer[i] == 96))
-			c = buffer[i];
-		else if (buffer[i] == c)
-			c = ' ';
-		i++;
-	}
-	if (buffer[i] == c && (buffer[i + 1] != ' '))
-	{
-		i++;
-		c = ' ';
-	}
-	printf("i = %d\n", i);
-	if (buffer[i] == 0 && c != ' ')//CORRESPOND A : on arrive a \0 sans retrouver le guillemet
-		return (-2);*/
 	c = ' ';
 	while (buffer[i] && (c != ' ' || !is_sep(buffer[i])))
 	{
@@ -61,39 +41,64 @@ int	get_word(char *buffer, t_lst *new)
 	return (1);
 }
 
+int	ft_strjoindollar(t_lst *l, char *var, int k, int dollar)
+{
+	int		i;
+	char	*tmp;
+	char	*new;
+
+	i = ft_strlen(var);
+	tmp = l->str;
+	new = malloc(sizeof(char) * (ft_strlen(tmp) + i - dollar));
+	if (!new)
+		exit(-1);
+	i = -1;
+	while (++i >= 0 && tmp[i] && i < k)
+		new[i] = tmp[i];
+	i--;
+	while (++i && var[i - k])
+		new[i] = var[i - k];
+	i--;
+	k--;
+	while (++i && ++k && tmp[k + dollar])
+		new[i] = tmp[k + dollar];
+	new[i] = '\0';
+	free(tmp);
+	tmp = NULL;
+	l->str = new;
+	return (1);
+}
+
 int	ft_replacedollar(t_lst *l, int k, int c)
 {
 	int		i;
 	int		dollar;
 	char	*var;
-	char	*new;
-	int		n;
 
 	dollar = 0;
 	while (l->str[k + dollar] && l->str[k + dollar] != '\t'
 			&& l->str[k + dollar] != ' ' && (c != 34 || l->str[k + dollar] != 34))
 		dollar++;
-	var = "";//fonction pour choper la str dans **envp
-	n = ft_strlen(var);
-	new = malloc(ft_strlen(l->str) + n - dollar);
-	if (!new)
-		return (-1);
-	i = -1;
-	while (++i && l->str[i] && i < k)
-		new[i] = l->str[i];
-	i--;
-	while (++i && var[i - k])
-		new[i] = var[i];
-	i--;
-	k--;
-	while (++i && ++k && l->str[k + dollar])
-		new[i] = l->str[k + dollar];
-	new[i] == '\0';
-	var = l->str;
-	l->str = new;
-	free(var);
-	var = 0; 
-	return (n - 2);
+	var = "$VAR$";//fonction pour choper la str dans **envp
+	i = ft_strlen(var);
+	ft_strjoindollar(l, var, k, dollar);
+//	free(var);
+//	var = 0;
+	return (i);
+}
+
+int	ft_remove_quotes(t_lst *l, int k, int c)
+{	//		<!> A TRAVAILLER <!>
+	int		i;
+	int		dollar;
+
+	i = 0;
+	while (l->str[k + dollar] && l->str[k + dollar] != '\t'
+			&& l->str[k + dollar] != ' ' && (c != 34 || l->str[k + dollar] != 34))
+		dollar++;
+	i = ft_strlen(l->str);
+//	ft_strjoindollar(l, var, k, dollar);
+	return (i);
 }
 
 void	expand(t_lst *lst)
@@ -102,7 +107,7 @@ void	expand(t_lst *lst)
 	int		i;
 	int		c;
 
-	ptr = lst;
+	ptr = lst->next;
 	while (ptr)
 	{
 		if (ptr->token == 0)
@@ -142,11 +147,12 @@ int	parse(char *line_buffer)
 		else
 			len = push_sep(lst, line_buffer + i);
 		if (len < 0)
-			return (print_err(len));
+			return (print_err(len) + free_lst(lst));
 		i = i + len;
 	}
 	ft_printlst(lst);
 	expand(lst);
+	ft_splitargs(lst);
 	ft_printlst(lst);
 	return (1);
 }

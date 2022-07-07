@@ -6,7 +6,7 @@
 /*   By: admaupie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/13 15:11:19 by admaupie          #+#    #+#             */
-/*   Updated: 2022/06/16 19:47:04 by admaupie         ###   ########.fr       */
+/*   Updated: 2022/06/22 17:28:41 by admaupie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,24 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+int	free_lst(t_lst *src)
+{
+	t_lst	*next;
+
+	while (src)
+	{
+		next = src->next;
+		if (src->str)
+			free(src->str);
+		src->str = NULL;
+		free(src);
+		src = next;
+	}
+	src = 0;
+	next = 0;
+	return (0);
+}
 
 void	push_lst(t_lst *new, t_lst *lst)
 {
