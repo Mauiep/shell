@@ -25,6 +25,7 @@ int	spe_count_words(char *str)
 	i = 0;
 	while (str[i])
 	{
+		printf("on est dans la boucle de count i= %d str + i = %s\n", i, str + i);
 		while (str[i] && str[i] == c && c == ' ')
 			i++;
 		if (str[i])
@@ -38,6 +39,7 @@ int	spe_count_words(char *str)
 			i++;
 		}
 	}
+	printf("on sort de count\n");
 	return (w);
 }
 
@@ -46,6 +48,7 @@ char	*spe_get_word(char *str, int n, int size)
 	int	w;
 	int	i;
 	int	c;
+	int	j;
 
 	c = ' ';
 	w = 0;
@@ -66,7 +69,19 @@ char	*spe_get_word(char *str, int n, int size)
 			i++;
 		}
 	}
-	printf("nous en sommes a : \"%s\"\n", str + i);
+	j = 0;
+	while (str[i] && str[i] == c)
+			i++;
+	while (str[i + j] && (c != ' ' || str[i + j] != c))
+	{
+			if (c == ' ' && (str[i + j] == SIMPLE_QUOTE || str[i + j] == 34))
+				c = str[i + j];
+			else if (c != ' ' && str[i + j] == c)
+				c = ' ';
+			j++;
+	}
+	printf("nous en sommes a : \"%s\" avec j =%d\n", str + i, j);
+	return ("ls");
 }
 
 t_arg	*ft_splitargs(t_lst *lst)
@@ -97,10 +112,12 @@ t_arg	*ft_splitargs(t_lst *lst)
 	j = 1;
 	while (j < i)
 	{
+
 		new->argv[j - 1] = spe_get_word(lst->str, j, i);
 		if (!new->argv[j - 1])
 			return (NULL);
 		j++;
 	}
+	printf("on sort de splitargs!\nnew->str=%s\n argv[0]=%s\n", new->str, new->argv[0]);
 	return (new);
 }

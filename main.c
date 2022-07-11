@@ -13,8 +13,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "parse.h"
-#include <readline/readline.h>
-#include <readline/history.h>
+#include "include/readline/readline.h"
+#include "include/readline/history.h"
 #include <unistd.h>
 
 
@@ -152,7 +152,7 @@ int	parse(char *line_buffer)
 	}
 	ft_printlst(lst);
 	expand(lst);
-	ft_splitargs(lst);
+	ft_splitargs(lst->next);
 	ft_printlst(lst);
 	return (1);
 }
@@ -161,7 +161,8 @@ int	main(int ac, char **av, char **envp)
 {
 	char	*line_buffer;
 
-	if (ac != 1)
+	parse("ls qbc");
+/*	if (ac != 1)
 		return (-1);
 	while (1)
 	{
@@ -173,5 +174,5 @@ int	main(int ac, char **av, char **envp)
 		free(line_buffer);
 	}
 	printf("arg[%d] = %s\n", 0, av[0]);
-	return (0);
+	return (0);*/
 }
