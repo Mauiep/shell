@@ -161,7 +161,7 @@ int	main(int ac, char **av, char **envp)
 {
 	char	*line_buffer;
 
-	parse("ls qbc");
+	parse("'\"ls ' \" abc\"");
 /*	if (ac != 1)
 		return (-1);
 	while (1)
