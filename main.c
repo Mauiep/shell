@@ -6,17 +6,17 @@
 /*   By: admaupie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 18:54:56 by admaupie          #+#    #+#             */
-/*   Updated: 2022/07/07 19:25:55 by admaupie         ###   ########.fr       */
+/*   Updated: 2022/07/14 21:14:22 by admaupie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "parse.h"
-#include "include/readline/readline.h"
-#include "include/readline/history.h"
+#include <readline/readline.h>
+#include <readline/history.h>
 #include <unistd.h>
-
+#include "minishell.h"
 
 int	get_word(char *buffer, t_lst *new)
 {
@@ -69,7 +69,7 @@ int	ft_strjoindollar(t_lst *l, char *var, int k, int dollar)
 	return (1);
 }
 
-int	ft_replacedollar(t_lst *l, int k, int c)
+int	ft_replacedollar(t_lst *l, int k, int c, t_dynarray *darr)
 {
 	int		i;
 	int		dollar;
@@ -77,31 +77,17 @@ int	ft_replacedollar(t_lst *l, int k, int c)
 
 	dollar = 0;
 	while (l->str[k + dollar] && l->str[k + dollar] != '\t'
-			&& l->str[k + dollar] != ' ' && (c != 34 || l->str[k + dollar] != 34))
+		&& l->str[k + dollar] != ' ' && (c != 34 || l->str[k + dollar] != 34))
 		dollar++;
-	var = "$VAR$";//fonction pour choper la str dans **envp
+	var = ft_getenvval(str, darr->list, darr->nb_cells); // comment faire la gestion erreur?
 	i = ft_strlen(var);
 	ft_strjoindollar(l, var, k, dollar);
-//	free(var);
+//	free(var); faut il le free?
 //	var = 0;
 	return (i);
 }
 
-int	ft_remove_quotes(t_lst *l, int k, int c)
-{	//		<!> A TRAVAILLER <!>
-	int		i;
-	int		dollar;
-
-	i = 0;
-	while (l->str[k + dollar] && l->str[k + dollar] != '\t'
-			&& l->str[k + dollar] != ' ' && (c != 34 || l->str[k + dollar] != 34))
-		dollar++;
-	i = ft_strlen(l->str);
-//	ft_strjoindollar(l, var, k, dollar);
-	return (i);
-}
-
-void	expand(t_lst *lst)
+void	expand(t_lst *lst, t_dynarray *darr)
 {
 	t_lst	*ptr;
 	int		i;
@@ -121,7 +107,7 @@ void	expand(t_lst *lst)
 				else if (c != 0 && ptr->str[i] == c)
 					c = 0;
 				else if (ptr->str[i] == '$' && c != SIMPLE_QUOTE)
-					i = i + ft_replacedollar(ptr, i, c);
+					i = i + ft_replacedollar(ptr, i, c, &darr);
 				i++;
 			}
 		}
@@ -129,10 +115,10 @@ void	expand(t_lst *lst)
 	}
 }
 
-int	parse(char *line_buffer)
+int	parse(char *line_buffer, t_dynarray *darr)
 {
-	int     i;
-	int     len;
+	int		i;
+	int		len;
 	t_lst	*lst;
 
 	lst = ft_lstnew();
@@ -150,29 +136,34 @@ int	parse(char *line_buffer)
 			return (print_err(len) + free_lst(lst));
 		i = i + len;
 	}
-	ft_printlst(lst);
-	expand(lst);
-	ft_splitargs(lst->next);
-	ft_printlst(lst);
+//	ft_printlst(lst);
+	expand(lst, &darr);
+//	ICI METTRE FONCTION NIKKI EXEC
+//	ft_splitargs(lst->next);
+//	ft_printlst(lst);
+	free_lst(lst);
 	return (1);
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	char	*line_buffer;
+	char		*line_buffer;
+//	t_dynarray	&darr;		ajouter include nikkishel
 
-	parse("'\"ls ' \" abc\"");
-/*	if (ac != 1)
+	(void)envp;//a delete
+	(void)av;
+	if (ac != 1)
 		return (-1);
+//	if (init_dyn_env(envp, &darr))
+//		return (-1);
 	while (1)
 	{
 		line_buffer = readline("$admaupie>");
 		if (line_buffer == NULL)
 			return (0);
 		add_history(line_buffer);
-		parse(line_buffer);
+		parse(line_buffer, darr);
 		free(line_buffer);
 	}
-	printf("arg[%d] = %s\n", 0, av[0]);
-	return (0);*/
+	return (0);
 }

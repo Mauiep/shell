@@ -6,7 +6,7 @@
 /*   By: admaupie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/13 15:11:19 by admaupie          #+#    #+#             */
-/*   Updated: 2022/06/22 17:28:41 by admaupie         ###   ########.fr       */
+/*   Updated: 2022/07/14 20:44:59 by admaupie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ int	free_lst(t_lst *src)
 {
 	t_lst	*next;
 
+	while (src->prev)
+		src = src->prev;
 	while (src)
 	{
 		next = src->next;

@@ -6,7 +6,7 @@
 /*   By: admaupie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 16:44:12 by admaupie          #+#    #+#             */
-/*   Updated: 2022/07/07 19:12:43 by admaupie         ###   ########.fr       */
+/*   Updated: 2022/07/14 20:35:44 by admaupie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,10 @@
 
 # define SIMPLE_QUOTE 39
 
-typedef struct s_arg
-{
-	char	*str;
-	char	**argv;
-}			t_arg;
-
 typedef struct s_lst
 {
 	char			*str;
 	int				token;
-	void			*value;
 	struct s_lst	*next;
 	struct s_lst	*prev;
 }					t_lst;
@@ -62,6 +55,6 @@ int		dollar_value(t_lst *l, char *dollar);
 int		has_pipe(t_lst *l);
 int		has_redirect(t_lst *l);
 
-t_arg	*ft_splitargs(t_lst *lst);
+char	**ft_splitargs(t_lst *lst);
 
 #endif

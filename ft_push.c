@@ -6,7 +6,7 @@
 /*   By: admaupie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/16 18:29:06 by admaupie          #+#    #+#             */
-/*   Updated: 2022/06/16 19:46:22 by admaupie         ###   ########.fr       */
+/*   Updated: 2022/07/14 20:30:39 by admaupie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,10 @@ int	push_word(t_lst *lst, char *buffer)
 int	push_sep(t_lst *lst, char *buffer)
 {
 	int		i;
-	t_lst	*tmp;
 	t_lst	*new;
 	int		token;
 
 	i = 0;
-	tmp = lst;
 	new = ft_lstnew();
 	if (!new)
 		return (-1);

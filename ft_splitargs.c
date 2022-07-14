@@ -6,7 +6,7 @@
 /*   By: admaupie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/22 17:34:36 by admaupie          #+#    #+#             */
-/*   Updated: 2022/07/07 19:29:53 by admaupie         ###   ########.fr       */
+/*   Updated: 2022/07/14 20:42:38 by admaupie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	spe_count_words(char *str)
 	i = 0;
 	while (str[i])
 	{
-		printf("on est dans la boucle de count i= %d str + i = %s\n", i, str + i);
+//		printf("on est dans la boucle de count i= %d str + i = %s\n", i, str + i);
 		while (str[i] && str[i] == c && c == ' ')
 			i++;
 		if (str[i])
@@ -43,7 +43,7 @@ int	spe_count_words(char *str)
 	return (w);
 }
 
-int		spe_lenword(char *str)
+int	spe_lenword(char *str)
 {
 	char	c;
 	int		i;
@@ -61,11 +61,11 @@ int		spe_lenword(char *str)
 	return (i);
 }
 
-char	*spe_get_word(char *str, int n, int size)
+char	*spe_get_word(char *str, int n)
 {
-	int	w;
-	int	i;
-	int	j;
+	int		w;
+	int		i;
+	int		j;
 	char	*new;
 
 	j = 0;
@@ -81,45 +81,32 @@ char	*spe_get_word(char *str, int n, int size)
 	}
 	while (str[i] && str[i] == ' ')
 			i++;
-	j = spe_lenword(str + i); 
+	j = spe_lenword(str + i);
 	new = ft_strndup(str + i, j);
 	if (!new)
 		return (NULL);
-	printf("new word = %s\n", new);
+	printf("word = %s\n", new);
 	return (new);
 }
 
-t_arg	*ft_splitargs(t_lst *lst)
+char	**ft_splitargs(t_lst *lst)
 {
-	t_arg	*new;
+	char	**new;
 	int		i;
 	int		j;
 
-	new = malloc(sizeof(t_arg *));
+	i = spe_count_words(lst->str);
+	new = malloc(sizeof(char *) * (i + 1));
 	if (!new)
 		return (NULL);
-	new->argv = NULL;
-	new->str = NULL;
-	i = spe_count_words(lst->str);
-	if (i > 1)
-	{
-		new->argv = malloc(sizeof(char *) * (i));
-		if (!new->argv)
-			return (NULL);
-	}
-	new->str = spe_get_word(lst->str, 0, i);
-	if (!new->str)
-		return (NULL);
-	printf("%s\n", new->str);
-	j = 1;
+	j = 0;
 	while (j < i)
 	{
-
-		new->argv[j - 1] = spe_get_word(lst->str, j, i);
-		if (!new->argv[j - 1])
+		new[j] = spe_get_word(lst->str, j);
+		if (!new[j])
 			return (NULL);
-		printf("argv[%d]=%s\n", j - 1, new->argv[j - 1]);
 		j++;
 	}
+	new[j] = NULL;
 	return (new);
 }
